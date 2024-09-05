@@ -7,11 +7,11 @@ class Player {
   final String forename;
   final int points;
   final int assists;
-  final int rebonds;  // Changé de "rebounds"
+  final int rebonds;
   final int steals;
   final int blocks;
   final int evaluation;
-  final int threePoints;  // Changé de "three_points"
+  final int threePoints;
   final int lancers;
   final int teamId;
 
@@ -20,33 +20,32 @@ class Player {
     required this.forename,
     required this.points,
     required this.assists,
-    required this.rebonds,  // Adapté
+    required this.rebonds,
     required this.steals,
     required this.blocks,
     required this.evaluation,
-    required this.threePoints,  // Adapté
+    required this.threePoints,
     required this.lancers,
     required this.teamId,
   });
 
-  // Factory method to create a Player from a JSON object
-factory Player.fromJson(Map<String, dynamic> json) {
-  print('Parsing JSON: $json'); // Ajoute cette ligne pour déboguer
+  factory Player.fromJson(Map<String, dynamic> json) {
+    print('Parsing JSON: $json'); // Pour déboguer
 
-  return Player(
-    name: json['name'] ?? '',
-    forename: json['forename'] ?? '',
-    points: json['points'] is int ? json['points'] : 0,
-    assists: json['assists'] is int ? json['assists'] : 0,
-    rebonds: json['rebonds'] is int ? json['rebonds'] : 0,
-    steals: json['steals'] is int ? json['steals'] : 0,
-    blocks: json['blocks'] is int ? json['blocks'] : 0,
-    evaluation: json['evaluation'] is int ? json['evaluation'] : 0,
-    threePoints: json['three_points'] is int ? json['three_points'] : 0,
-    lancers: json['lancers'] is int ? json['lancers'] : 0,
-    teamId: json['team_id'] is int ? json['team_id'] : 0,
-  );
-}
+    return Player(
+      name: json['name'] ?? '',
+      forename: json['forename'] ?? '',
+      points: json['points'] is int ? json['points'] : 0,
+      assists: json['assists'] is int ? json['assists'] : 0,
+      rebonds: json['rebonds'] is int ? json['rebonds'] : 0,
+      steals: json['steals'] is int ? json['steals'] : 0,
+      blocks: json['blocks'] is int ? json['blocks'] : 0,
+      evaluation: json['evaluation'] is int ? json['evaluation'] : 0,
+      threePoints: json['three_points'] is int ? json['three_points'] : 0,
+      lancers: json['lancers'] is int ? json['lancers'] : 0,
+      teamId: json['team_id'] is int ? json['team_id'] : 0,
+    );
+  }
 }
 
 class PlayerScreen extends StatefulWidget {
@@ -70,62 +69,66 @@ class _PlayerScreenState extends State<PlayerScreen> {
   }
 
   // Méthode pour récupérer les joueurs depuis le backend
-Future<void> fetchPlayers() async {
-  try {
-    final response = await http.get(Uri.parse('http://localhost:3000/teams/${widget.teamId}/players'));
+  Future<void> fetchPlayers() async {
+    try {
+      final response = await http.get(Uri.parse('http://localhost:3000/teams/${widget.teamId}/players'));
 
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonData = json.decode(response.body);
-      print('Raw JSON Data: $jsonData'); // Pour déboguer
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+        print('Raw JSON Data: $jsonData'); // Pour déboguer
 
-      setState(() {
-        players = jsonData.map((data) {
-          try {
-            return Player.fromJson(data);
-          } catch (e) {
-            print('Error parsing player data: $e');
-            return null; // Assurez-vous de gérer les joueurs invalides
-          }
-        }).whereType<Player>().toList();
-        isLoading = false;
-      });
-    } else {
-      print('Erreur serveur: ${response.body}');
+        setState(() {
+          players = jsonData.map((data) {
+            try {
+              return Player.fromJson(data);
+            } catch (e) {
+              print('Error parsing player data: $e');
+              return null; // Assurez-vous de gérer les joueurs invalides
+            }
+          }).whereType<Player>().toList();
+          isLoading = false;
+        });
+      } else {
+        print('Erreur serveur: ${response.body}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Erreur lors du chargement des joueurs: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      print('Erreur réseau: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Erreur lors du chargement des joueurs: ${response.body}')),
+        SnackBar(content: Text('Erreur réseau: $e')),
       );
     }
-  } catch (e) {
-    print('Erreur réseau: $e');
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Erreur réseau: $e')),
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Joueurs de l\'équipe ${widget.teamId}'),
+      ),
+      body: isLoading
+          ? Center(child: CircularProgressIndicator()) // Indicateur de chargement
+          : ListView.builder(
+              itemCount: players.length, // Nombre de joueurs à afficher
+              itemBuilder: (context, index) {
+                final player = players[index];
+                final isExpanded = _expandedPlayers[index] ?? false; // Vérifier si ce joueur est expansé
+
+                return _buildPlayerTile(
+                  player,
+                  isExpanded,
+                  () {
+                    setState(() {
+                      _expandedPlayers[index] = !isExpanded; // Toggle l'état d'expansion
+                    });
+                  },
+                );
+              },
+            ),
     );
   }
-}
-
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(
-      title: Text('Joueurs de l\'équipe ${widget.teamId}'),
-    ),
-    body: isLoading
-        ? Center(child: CircularProgressIndicator()) // Indicateur de chargement
-        : ListView.builder(
-            itemCount: players.length, // Nombre de joueurs à afficher
-            itemBuilder: (context, index) {
-              final player = players[index];
-              return ListTile(
-                title: Text('${player.forename} ${player.name}'), // Affiche juste le nom et prénom
-              );
-            },
-          ),
-  );
-}
-
-
-
 
   // Fonction pour construire chaque ligne de joueur avec un menu déroulant
   Widget _buildPlayerTile(Player player, bool isExpanded, VoidCallback onTap) {
@@ -143,7 +146,7 @@ Widget build(BuildContext context) {
               children: [
                 _buildStatRow('Points', player.points),
                 _buildStatRow('Assists', player.assists),
-                _buildStatRow('rebonds', player.rebonds),
+                _buildStatRow('Rebonds', player.rebonds),
                 _buildStatRow('Steals', player.steals),
                 _buildStatRow('Blocks', player.blocks),
                 _buildStatRow('Evaluation', player.evaluation),

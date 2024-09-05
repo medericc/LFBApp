@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class StatsScreen extends StatefulWidget {
-  final String league; // Pass the league name to this screen
+  final String leagueId; // Pass the leagueId name to this screen
 
-  StatsScreen({required this.league});
+  StatsScreen({required this.leagueId});
 
   @override
   _StatsScreenState createState() => _StatsScreenState();
@@ -12,29 +14,43 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   // This will store which bar is expanded
   bool _isPointsExpanded = false;
-  bool _isAssistsExpanded = false;
-  bool _isReboundsExpanded = false;
-  bool _isStealsExpanded = false;
-  bool _isBlocksExpanded = false;
-  bool _isEffExpanded = false;
-  bool _is3pExpanded = false;
-  bool _isLfExpanded = false;
+  
+  // Dynamic data for top players
+  List<String> topPointsPlayers = [];
 
-  // Dummy data for top 5 players for each stat (You can replace this with real data from your backend)
-  List<String> topPointsPlayers = ['Player 1', 'Player 2', 'Player 3', 'Player 4', 'Player 5'];
-  List<String> topAssistsPlayers = ['Player A', 'Player B', 'Player C', 'Player D', 'Player E'];
-  List<String> topReboundsPlayers = ['Player X', 'Player Y', 'Player Z', 'Player Q', 'Player W'];
-  List<String> topStealsPlayers = ['Player M', 'Player N', 'Player O', 'Player P', 'Player R'];
-  List<String> topBlocksPlayers = ['Player F', 'Player G', 'Player H', 'Player I', 'Player J'];
-  List<String> topEffPlayers = ['Player F', 'Player G', 'Player H', 'Player I', 'Player J'];
-  List<String> top3pPlayers = ['Player F', 'Player G', 'Player H', 'Player I', 'Player J'];
-  List<String> topLfPlayers = ['Player F', 'Player G', 'Player H', 'Player I', 'Player J'];
+  @override
+  void initState() {
+    super.initState();
+    fetchTopPlayers(); // Fetch data when the screen is initialized
+  }
+
+  Future<void> fetchTopPlayers() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:3000/${widget.leagueId}/top-players/points')
+      );
+      
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as List;
+        setState(() {
+          topPointsPlayers = data.map((player) => '${player['forename']} ${player['name']}').toList();
+        });
+      } else {
+        throw Exception('Erreur lors de la récupération des joueurs');
+      }
+    } catch (error) {
+      print('Erreur: $error');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erreur lors du chargement des joueurs')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.league} Stats'), // Show the selected league
+        title: Text('${widget.leagueId} Stats'), // Show the selected leagueId
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -44,45 +60,6 @@ class _StatsScreenState extends State<StatsScreen> {
               setState(() {
                 _isPointsExpanded = !_isPointsExpanded;
               });
-            }),
-            _buildStatBar('Assists', topAssistsPlayers, _isAssistsExpanded, () {
-              setState(() {
-                _isAssistsExpanded = !_isAssistsExpanded;
-              });
-            }),
-            _buildStatBar('Rebounds', topReboundsPlayers, _isReboundsExpanded, () {
-              setState(() {
-                _isReboundsExpanded = !_isReboundsExpanded;
-              });
-            }),
-            _buildStatBar('Steals', topStealsPlayers, _isStealsExpanded, () {
-              setState(() {
-                _isStealsExpanded = !_isStealsExpanded;
-              });
-            }),
-            _buildStatBar('Blocks', topBlocksPlayers, _isBlocksExpanded, () {
-              setState(() {
-                _isBlocksExpanded = !_isBlocksExpanded;
-              });
-              
-            }),
-             _buildStatBar('Efficiency', topEffPlayers, _isEffExpanded, () {
-              setState(() {
-                _isEffExpanded = !_isEffExpanded;
-              });
-              
-            }),
-             _buildStatBar('3 Points', top3pPlayers, _is3pExpanded, () {
-              setState(() {
-                _is3pExpanded = !_is3pExpanded;
-              });
-              
-            }),
-             _buildStatBar('Lancer-Franc', topLfPlayers, _isLfExpanded, () {
-              setState(() {
-                _isLfExpanded = !_isLfExpanded;
-              });
-              
             }),
           ],
         ),

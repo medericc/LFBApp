@@ -8,7 +8,7 @@ class LfbScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('League Selection'),
+        title: Text('leagueId Selection'),
       ),
       body: Center(
         child: Column(
@@ -16,10 +16,10 @@ class LfbScreen extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                // Navigate to StatsScreen with LFB league
+                // Navigate to StatsScreen with LFB leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: '1')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '1')),
                 );
               },
               child: Text('LFB'),
@@ -27,10 +27,10 @@ class LfbScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to StatsScreen with LF2 league
+                // Navigate to StatsScreen with LF2 leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: '2')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '2')),
                 );
               },
               child: Text('LF2'),
@@ -38,10 +38,10 @@ class LfbScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to StatsScreen with NF1 Poule A league
+                // Navigate to StatsScreen with NF1 Poule A leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: '3')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '3')),
                 );
               },
               child: Text('NF1 A'),
@@ -49,10 +49,10 @@ class LfbScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to StatsScreen with NF1 Poule B league
+                // Navigate to StatsScreen with NF1 Poule B leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: '4')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '4')),
                 );
               },
               child: Text('NF1 B'),
