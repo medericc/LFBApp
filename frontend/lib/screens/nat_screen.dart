@@ -8,7 +8,7 @@ class NatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('League Selection'),
+        title: Text('LeagueId Selection'),
       ),
       body: Center(
         child: Column(
@@ -16,10 +16,10 @@ class NatScreen extends StatelessWidget {
           children: <Widget>[
             ElevatedButton(
               onPressed: () {
-                // Navigate to TeamScreen with LFB league
+                // Navigate to TeamScreen with LFB leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TeamScreen(league: 'LFB')),
+                  MaterialPageRoute(builder: (context) => TeamScreen(leagueId: '1', name: 'lfb')),
                 );
               },
               child: Text('LFB'),
@@ -27,10 +27,10 @@ class NatScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to TeamScreen with LF2 league
+                // Navigate to TeamScreen with LF2 leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TeamScreen(league: 'LF2')),
+                  MaterialPageRoute(builder: (context) => TeamScreen(leagueId: '2',name: 'lf2')),
                 );
               },
               child: Text('LF2'),
@@ -38,10 +38,10 @@ class NatScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to TeamScreen with NF1 Poule A league
+                // Navigate to TeamScreen with NF1 Poule A leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TeamScreen(league: 'NF1 Poule A')),
+                  MaterialPageRoute(builder: (context) => TeamScreen(leagueId: '3',name: 'NF1 A')),
                 );
               },
               child: Text('NF1 A'),
@@ -49,10 +49,10 @@ class NatScreen extends StatelessWidget {
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                // Navigate to TeamScreen with NF1 Poule B league
+                // Navigate to TeamScreen with NF1 Poule B leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TeamScreen(league: 'NF1 Poule B')),
+                  MaterialPageRoute(builder: (context) => TeamScreen(leagueId: '4', name:'NF1 B')),
                 );
               },
               child: Text('NF1 B'),

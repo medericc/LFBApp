@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",          // Dossier de sortie des fichiers compilés
+    "sourceMap": true,           // Permet le mapping pour le débogage
+    "noImplicitAny": true,       // Active les avertissements pour les types implicites "any"
+    "strictNullChecks": true     // Vérifie les "null" et "undefined"
+  }
+}

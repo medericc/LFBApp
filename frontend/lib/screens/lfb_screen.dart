@@ -19,7 +19,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with LFB league
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: 'LFB')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(league: '1')),
                 );
               },
               child: Text('LFB'),
@@ -30,7 +30,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with LF2 league
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: 'LF2')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(league: '2')),
                 );
               },
               child: Text('LF2'),
@@ -41,7 +41,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with NF1 Poule A league
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: 'NF1 Poule A')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(league: '3')),
                 );
               },
               child: Text('NF1 A'),
@@ -52,7 +52,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with NF1 Poule B league
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(league: 'NF1 Poule B')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(league: '4')),
                 );
               },
               child: Text('NF1 B'),
