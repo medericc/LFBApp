@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'dart:convert'; // Pour décoder les réponses JSON
 import 'package:http/http.dart' as http; // Pour les requêtes HTTP
-
+import 'player_screen.dart'; 
 class TeamScreen extends StatefulWidget {
   final String leagueId;
-   final String name; // ID de la ligue passé depuis l'écran précédent
+  final String name; // Nom de la ligue passé depuis l'écran précédent
 
   TeamScreen({required this.leagueId, required this.name});
 
@@ -13,8 +13,8 @@ class TeamScreen extends StatefulWidget {
 }
 
 class _TeamScreenState extends State<TeamScreen> {
-  List<String> teams = []; // Liste des équipes à afficher
-  bool isLoading = true; // Pour indiquer que les données sont en cours de chargement
+  List<Map<String, dynamic>> teams = []; // Liste des équipes (id et nom)
+  bool isLoading = true; // Indicateur de chargement
 
   @override
   void initState() {
@@ -28,9 +28,14 @@ class _TeamScreenState extends State<TeamScreen> {
       final response = await http.get(Uri.parse('http://localhost:3000/leagues/${widget.leagueId}/teams'));
 
       if (response.statusCode == 200) {
-        print('Response data: ${response.body}'); // Affiche la réponse dans la console
+        print('Response data: ${response.body}');
         setState(() {
-          teams = List<String>.from(json.decode(response.body).map((team) => team['name']));
+          teams = List<Map<String, dynamic>>.from(
+            json.decode(response.body).map((team) => {
+              'id': team['id'], 
+              'name': team['name'],
+            }),
+          );
           isLoading = false;
         });
       } else {
@@ -40,8 +45,6 @@ class _TeamScreenState extends State<TeamScreen> {
         );
       }
     } catch (e) {
-      print('Fetching teams for league ID: ${widget.leagueId}');
-
       print('Erreur : $e');
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Erreur réseau')),
@@ -72,13 +75,16 @@ class _TeamScreenState extends State<TeamScreen> {
                     height: 50, // Hauteur fixée des boutons
                     child: ElevatedButton(
                       onPressed: () {
-                        // Action lors de la sélection d'une équipe
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Équipe sélectionnée : ${teams[index]}')),
+                        // Navigue vers l'écran des joueurs avec l'ID de l'équipe sélectionnée
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => PlayerScreen(teamId: teams[index]['id'].toString()),
+                          ),
                         );
                       },
                       child: Text(
-                        teams[index],
+                        teams[index]['name'], // Afficher le nom de l'équipe
                         style: TextStyle(fontSize: 14), // Ajuster la taille du texte si besoin
                       ),
                       style: ElevatedButton.styleFrom(
@@ -92,3 +98,4 @@ class _TeamScreenState extends State<TeamScreen> {
     );
   }
 }
+
