@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 
 class StatsScreen extends StatefulWidget {
   final String leagueId; // Pass the leagueId name to this screen
-
-  StatsScreen({required this.leagueId});
+final String name;
+  StatsScreen({required this.leagueId, required this.name});
 
   @override
   _StatsScreenState createState() => _StatsScreenState();
@@ -23,14 +23,14 @@ class _StatsScreenState extends State<StatsScreen> {
   bool _isLfExpanded = false;
 
   // Dynamic data for top players for each stat
-  List<String> topPointsPlayers = [];
-  List<String> topAssistsPlayers = [];
-  List<String> topReboundsPlayers = [];
-  List<String> topStealsPlayers = [];
-  List<String> topBlocksPlayers = [];
-  List<String> topEffPlayers = [];
-  List<String> top3pPlayers = [];
-  List<String> topLfPlayers = [];
+  List<Map<String, dynamic>> topPointsPlayers = [];
+  List<Map<String, dynamic>> topAssistsPlayers = [];
+  List<Map<String, dynamic>> topReboundsPlayers = [];
+  List<Map<String, dynamic>> topStealsPlayers = [];
+  List<Map<String, dynamic>> topBlocksPlayers = [];
+  List<Map<String, dynamic>> topEffPlayers = [];
+  List<Map<String, dynamic>> top3pPlayers = [];
+  List<Map<String, dynamic>> topLfPlayers = [];
 
   @override
   void initState() {
@@ -45,7 +45,7 @@ class _StatsScreenState extends State<StatsScreen> {
     fetchTopPlayers('lancers', (players) => setState(() => topLfPlayers = players));
   }
 
-  Future<void> fetchTopPlayers(String stat, Function(List<String>) onPlayersLoaded) async {
+  Future<void> fetchTopPlayers(String stat, Function(List<Map<String, dynamic>>) onPlayersLoaded) async {
     try {
       final response = await http.get(
         Uri.parse('http://localhost:3000/${widget.leagueId}/top-players/$stat')
@@ -53,7 +53,11 @@ class _StatsScreenState extends State<StatsScreen> {
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body) as List;
-        onPlayersLoaded(data.map((player) => '${player['forename']} ${player['name']}').toList());
+        // Inclure les statistiques avec chaque joueur
+        onPlayersLoaded(data.map((player) => {
+          'name': '${player['forename']} ${player['name']}',
+          'stat': player[stat].toString() // Utilisation dynamique de la statistique
+        }).toList());
       } else {
         throw Exception('Erreur lors de la récupération des joueurs');
       }
@@ -69,60 +73,62 @@ class _StatsScreenState extends State<StatsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('${widget.leagueId} Stats'), // Show the selected leagueId
+        title: Text('${widget.name} Stats'), // Show the selected leagueId
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: <Widget>[
-            _buildStatBar('Points', topPointsPlayers, _isPointsExpanded, () {
-              setState(() {
-                _isPointsExpanded = !_isPointsExpanded;
-              });
-            }),
-            _buildStatBar('Assists', topAssistsPlayers, _isAssistsExpanded, () {
-              setState(() {
-                _isAssistsExpanded = !_isAssistsExpanded;
-              });
-            }),
-            _buildStatBar('Rebounds', topReboundsPlayers, _isReboundsExpanded, () {
-              setState(() {
-                _isReboundsExpanded = !_isReboundsExpanded;
-              });
-            }),
-            _buildStatBar('Steals', topStealsPlayers, _isStealsExpanded, () {
-              setState(() {
-                _isStealsExpanded = !_isStealsExpanded;
-              });
-            }),
-            _buildStatBar('Blocks', topBlocksPlayers, _isBlocksExpanded, () {
-              setState(() {
-                _isBlocksExpanded = !_isBlocksExpanded;
-              });
-            }),
-            _buildStatBar('Efficiency', topEffPlayers, _isEffExpanded, () {
-              setState(() {
-                _isEffExpanded = !_isEffExpanded;
-              });
-            }),
-            _buildStatBar('3 Points', top3pPlayers, _is3pExpanded, () {
-              setState(() {
-                _is3pExpanded = !_is3pExpanded;
-              });
-            }),
-            _buildStatBar('Lancer-Franc', topLfPlayers, _isLfExpanded, () {
-              setState(() {
-                _isLfExpanded = !_isLfExpanded;
-              });
-            }),
-          ],
+        child: SingleChildScrollView( // Add a scroll view to avoid overflow issues
+          child: Column(
+            children: <Widget>[
+              _buildStatBar('Points', topPointsPlayers, _isPointsExpanded, () {
+                setState(() {
+                  _isPointsExpanded = !_isPointsExpanded;
+                });
+              }),
+              _buildStatBar('Assists', topAssistsPlayers, _isAssistsExpanded, () {
+                setState(() {
+                  _isAssistsExpanded = !_isAssistsExpanded;
+                });
+              }),
+              _buildStatBar('Rebounds', topReboundsPlayers, _isReboundsExpanded, () {
+                setState(() {
+                  _isReboundsExpanded = !_isReboundsExpanded;
+                });
+              }),
+              _buildStatBar('Steals', topStealsPlayers, _isStealsExpanded, () {
+                setState(() {
+                  _isStealsExpanded = !_isStealsExpanded;
+                });
+              }),
+              _buildStatBar('Blocks', topBlocksPlayers, _isBlocksExpanded, () {
+                setState(() {
+                  _isBlocksExpanded = !_isBlocksExpanded;
+                });
+              }),
+              _buildStatBar('Efficiency', topEffPlayers, _isEffExpanded, () {
+                setState(() {
+                  _isEffExpanded = !_isEffExpanded;
+                });
+              }),
+              _buildStatBar('3 Points', top3pPlayers, _is3pExpanded, () {
+                setState(() {
+                  _is3pExpanded = !_is3pExpanded;
+                });
+              }),
+              _buildStatBar('Lancer-Franc', topLfPlayers, _isLfExpanded, () {
+                setState(() {
+                  _isLfExpanded = !_isLfExpanded;
+                });
+              }),
+            ],
+          ),
         ),
       ),
     );
   }
 
   // Function to build each stat bar with a toggle for dropdown
-  Widget _buildStatBar(String statName, List<String> players, bool isExpanded, VoidCallback onTap) {
+  Widget _buildStatBar(String statName, List<Map<String, dynamic>> players, bool isExpanded, VoidCallback onTap) {
     return Column(
       children: [
         ListTile(
@@ -134,11 +140,16 @@ class _StatsScreenState extends State<StatsScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
-              children: players
-                  .map((player) => ListTile(
-                        title: Text(player),
-                      ))
-                  .toList(),
+              children: players.map((player) => ListTile(
+                title: Row(
+                  children: [
+                    Expanded(
+                      child: Text(player['name']), // Affiche le nom complet du joueur
+                    ),
+                    Text(player['stat']), // Affiche la statistique associée
+                  ],
+                ),
+              )).toList(),
             ),
           ),
         Divider(),

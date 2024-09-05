@@ -8,7 +8,7 @@ class LfbScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('leagueId Selection'),
+        title: Text('Statistiques par Joueuses'),
       ),
       body: Center(
         child: Column(
@@ -19,7 +19,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with LFB leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '1')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '1',name:'LFB')),
                 );
               },
               child: Text('LFB'),
@@ -30,7 +30,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with LF2 leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '2')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '2',name: 'LF2')),
                 );
               },
               child: Text('LF2'),
@@ -41,7 +41,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with NF1 Poule A leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '3')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '3',name:"NF1 A")),
                 );
               },
               child: Text('NF1 A'),
@@ -52,7 +52,7 @@ class LfbScreen extends StatelessWidget {
                 // Navigate to StatsScreen with NF1 Poule B leagueId
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '4')),
+                  MaterialPageRoute(builder: (context) => StatsScreen(leagueId: '4', name:"NF1 B")),
                 );
               },
               child: Text('NF1 B'),

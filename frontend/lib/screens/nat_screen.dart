@@ -8,7 +8,7 @@ class NatScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('LeagueId Selection'),
+        title: Text('Leader par Catégories'),
       ),
       body: Center(
         child: Column(
