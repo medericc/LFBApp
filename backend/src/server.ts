@@ -54,6 +54,43 @@ app.get('/leagues/:leagueId/teams', (req: Request, res: Response) => {
   });
 });
 
+// Obtenir les équipes d'une ligue donnée par ID de ligue
+// Liste des statistiques valides
+const validStats = ['points', 'assists', 'rebonds', 'blocks', 'steals', 'evaluation', 'three_points', 'lancers'];
+
+// Obtenir les meilleurs joueurs d'une ligue donnée pour une statistique spécifique
+app.get('/:leagueId/top-players/:stat', (req: Request, res: Response) => {
+  const leagueId = req.params.leagueId;
+  const stat = req.params.stat;
+
+  // Valider si la statistique demandée est valide
+  if (!validStats.includes(stat)) {
+    return res.status(400).json({ message: 'Statistique non valide' });
+  }
+
+  // Construire la requête SQL en toute sécurité
+  const query = `
+    SELECT player.name, player.forename, player.${stat}
+    FROM player 
+    JOIN team ON player.team_id = team.id
+    WHERE team.league_id = ?
+    ORDER BY player.${stat} DESC
+    LIMIT 5
+  `;
+
+  // Exécuter la requête
+  db.query(query, [leagueId], (err: MysqlError | null, results: any[]) => {
+    if (err) {
+      console.error('Erreur SQL:', err);
+      return res.status(500).json({ message: 'Erreur lors de la récupération des meilleurs joueurs' });
+    }
+    
+    // Renvoyer les résultats
+    res.json(results);
+  });
+});
+
+
 
 
 // Démarrer le serveur
